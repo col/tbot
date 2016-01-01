@@ -1,0 +1,2 @@
+<p>Received Telegram Message</p>
+<p>Update = <%= @update %></p>

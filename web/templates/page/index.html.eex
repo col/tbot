@@ -1,0 +1,4 @@
+<div class="jumbotron">
+  <h2><%= @first_name %></h2>
+  <p class="lead">An attempt at a Telegram Chat Bot.</p>
+</div>
