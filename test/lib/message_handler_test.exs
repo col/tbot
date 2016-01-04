@@ -10,7 +10,7 @@ defmodule Tbot.MessageHandlerTest do
   @from %{ first_name: "Fred", id: 456 }
   @message %{ chat: @chat, from: @from, date: 1451868542}
 
-  defp message(params \\ %{}) do
+  defp message(params) do
     Map.merge(@message, params)
   end
 
@@ -54,7 +54,7 @@ defmodule Tbot.MessageHandlerTest do
 
 
   @tag :roll_call_open
-  test "/in responds correctly", %{ roll_call: roll_call } do
+  test "/in responds correctly" do
     {status, response} = MessageHandler.handle_message(message(%{text: "/in"}))
     assert {status, response} == {:ok, "1. Fred\n"}
   end
@@ -68,7 +68,7 @@ defmodule Tbot.MessageHandlerTest do
 
 
   @tag :roll_call_open
-  test "/out responds correctly", %{ roll_call: roll_call } do
+  test "/out responds correctly" do
     {status, response} = MessageHandler.handle_message(message(%{text: "/out"}))
     assert {status, response} == {:ok, "Out\n - Fred\n"}
   end
@@ -83,22 +83,22 @@ defmodule Tbot.MessageHandlerTest do
 
   @tag :roll_call_open
   test "/whos_in lists all the in and out responses", %{ roll_call: roll_call } do
-    response1 = Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: 1, name: "User 1"})
-    response2 = Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 2, name: "User 2"})
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: 1, name: "User 1"})
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 2, name: "User 2"})
     {status, response} = MessageHandler.handle_message(message(%{text: "/whos_in"}))
     assert {status, response} == {:ok, "1. User 1\n\nOut\n - User 2\n"}
   end
 
   @tag :roll_call_open
   test "/whos_in doesn't print an empty out list", %{ roll_call: roll_call } do
-    response1 = Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: 1, name: "User 1"})
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: 1, name: "User 1"})
     {status, response} = MessageHandler.handle_message(message(%{text: "/whos_in"}))
     assert {status, response} == {:ok, "1. User 1\n"}
   end
 
   @tag :roll_call_open
   test "/whos_in doesn't print an empty in list", %{ roll_call: roll_call } do
-    response1 = Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 2, name: "User 2"})
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 2, name: "User 2"})
     {status, response} = MessageHandler.handle_message(message(%{text: "/whos_in"}))
     assert {status, response} == {:ok, "Out\n - User 2\n"}
   end

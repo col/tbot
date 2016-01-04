@@ -3,7 +3,7 @@ defmodule Tbot.RollCallTest do
 
   alias Tbot.RollCall
 
-  @valid_attrs %{chat_id: 42, date: "2010-04-17 14:00:00", status: "some content"}
+  @valid_attrs %{chat_id: 42, date: 1451868542, status: "some content"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
