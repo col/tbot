@@ -20,7 +20,7 @@ defmodule Tbot.Router do
   end
 
   scope "/telegram", Tbot do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :api
 
     get "/message", TelegramMessageController, :show
     post "/message", TelegramMessageController, :create
