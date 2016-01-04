@@ -1,12 +1,13 @@
 defmodule Tbot.TelegramMessageController do
   use Tbot.Web, :controller
+  import Tbot.MessageHandler
+  import Atom.Chars
 
   def create(conn, params) do
-    # TODO: do something with the messages here!
-    IO.puts "Message received!"
-    IO.puts "Keys: #{Map.keys(params)}"
-    IO.puts to_string(params)
-    json conn, %{ status: "ok", update: params["update"] }
+    message = to_atom(params).message
+    {status, response} = Tbot.MessageHandler.handle_message(message)
+    Nadia.send_message(message.chat.id, response, [{:reply_to_message_id, message.message_id}])
+    json conn, %{ status: "ok" }
   end
 
   def show(conn, params) do

@@ -1,0 +1,14 @@
+message:
+  chat:
+    id: -8874425
+    title: Bot Test
+    type: group
+  date: 1451868542
+  from:
+    first_name: Col
+    id: 51890598
+    last_name: Harris
+    username: col_harris
+  message_id: 29
+  text: /in
+update_id: 145249897
