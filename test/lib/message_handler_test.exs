@@ -66,6 +66,13 @@ defmodule Tbot.MessageHandlerTest do
     assert response.roll_call_id == roll_call.id
   end
 
+  @tag :roll_call_open
+  test "/in updates an existing response", %{ roll_call: roll_call } do
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: @from.id, name: @from.first_name})
+    MessageHandler.handle_message(message(%{text: "/in"}))
+    assert Repo.one!(RollCallResponse).status == "in"
+  end
+
 
   @tag :roll_call_open
   test "/out responds correctly" do
@@ -78,6 +85,13 @@ defmodule Tbot.MessageHandlerTest do
     MessageHandler.handle_message(message(%{text: "/out"}))
     response = Repo.get_by!(RollCallResponse, %{status: "out", user_id: @from.id, name: @from.first_name})
     assert response.roll_call_id == roll_call.id
+  end
+
+  @tag :roll_call_open
+  test "/out updates an existing response", %{ roll_call: roll_call } do
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: @from.id, name: @from.first_name})
+    MessageHandler.handle_message(message(%{text: "/out"}))
+    assert Repo.one!(RollCallResponse).status == "out"
   end
 
 

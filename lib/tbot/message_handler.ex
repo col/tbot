@@ -89,8 +89,12 @@ defmodule Tbot.MessageHandler do
   end
 
   defp update_attendance(roll_call, message, status) do
-    Ecto.Model.build(roll_call, :responses, %{user_id: message.from.id, name: message.from.first_name, status: status})
-    |> Repo.insert!
+    case Repo.get_by(RollCallResponse, %{ roll_call_id: roll_call.id, user_id: message.from.id }) do
+      nil  -> Ecto.Model.build(roll_call, :responses)
+      response -> response
+    end
+    |> RollCallResponse.changeset(%{user_id: message.from.id, name: message.from.first_name, status: status})
+    |> Repo.insert_or_update
   end
 
 end
