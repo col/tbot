@@ -117,4 +117,20 @@ defmodule Tbot.MessageHandlerTest do
     assert {status, response} == {:ok, "Out\n - User 2\n"}
   end
 
+  @tag :roll_call_open
+  test "/whos_in lists 'in' people in correct order", %{ roll_call: roll_call } do
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: 2, name: "User 2", updated_at: Ecto.DateTime.from_erl({{2015, 2, 2}, {2, 2, 2}})})
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: 1, name: "User 1", updated_at: Ecto.DateTime.from_erl({{2015, 1, 1}, {1, 1, 1}})})
+    {status, response} = MessageHandler.handle_message(message(%{text: "/whos_in"}))
+    assert {status, response} == {:ok, "1. User 1\n2. User 2\n"}
+  end
+
+  @tag :roll_call_open
+  test "/whos_in lists 'out' people in correct order", %{ roll_call: roll_call } do
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 2, name: "User 2", updated_at: Ecto.DateTime.from_erl({{2015, 2, 2}, {2, 2, 2}})})
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 1, name: "User 1", updated_at: Ecto.DateTime.from_erl({{2015, 1, 1}, {1, 1, 1}})})
+    {status, response} = MessageHandler.handle_message(message(%{text: "/whos_in"}))
+    assert {status, response} == {:ok, "Out\n - User 1\n - User 2\n"}
+  end
+
 end

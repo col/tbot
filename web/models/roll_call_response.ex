@@ -23,4 +23,16 @@ defmodule Tbot.RollCallResponse do
     model
     |> cast(params, @required_fields, @optional_fields)
   end
+
+  def for_roll_call(query, roll_call) do
+    from r in query,
+    where: r.roll_call_id == ^roll_call.id
+  end
+
+  def with_status(query, status) do
+    from r in query,
+    where: r.status == ^status,
+    order_by: r.updated_at
+  end
+
 end

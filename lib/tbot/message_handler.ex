@@ -1,5 +1,6 @@
 defmodule Tbot.MessageHandler do
   import Ecto.Query, only: [from: 2]
+  import Tbot.RollCallResponse, only: [for_roll_call: 2, with_status: 2]
   alias Tbot.Repo
   alias Tbot.RollCall
   alias Tbot.RollCallResponse
@@ -61,7 +62,7 @@ defmodule Tbot.MessageHandler do
 
   defp in_response_list(roll_call) do
     output = ""
-    in_responses = roll_call.responses |> Enum.filter(fn r -> r.status == "in" end)
+    in_responses = RollCallResponse |> for_roll_call(roll_call) |> with_status("in") |> Repo.all
     unless Enum.empty?(in_responses) do
       output = Enum.with_index(in_responses)
       |> Enum.reduce("", fn({response, index}, acc) -> acc <> "#{index+1}. #{response.name}\n" end)
@@ -71,7 +72,7 @@ defmodule Tbot.MessageHandler do
 
   defp out_response_list(roll_call) do
     output = ""
-    out_responses = roll_call.responses |> Enum.filter(fn r -> r.status == "out" end)
+    out_responses = RollCallResponse |> for_roll_call(roll_call) |> with_status("out") |> Repo.all
     unless Enum.empty?(out_responses) do
       output = output <> "Out\n"
       output = Enum.reduce(out_responses, output, fn(response, acc) -> acc <> " - #{response.name}\n" end)
