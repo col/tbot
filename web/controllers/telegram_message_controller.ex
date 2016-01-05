@@ -7,6 +7,7 @@ defmodule Tbot.TelegramMessageController do
     message = to_atom(params).message
     case Tbot.MessageHandler.handle_message(message) do
       {:ok, response} -> Nadia.send_message(message.chat.id, response)
+      {:error, _} -> # do nothing
     end
     json conn, %{}
   end
