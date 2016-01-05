@@ -12,10 +12,6 @@ defmodule Tbot.TelegramMessageController do
     json conn, %{}
   end
 
-  def show(conn, params) do
-    render conn, "show.html", update: params["update"]
-  end
-
 end
 
 defimpl String.Chars, for: Map do
