@@ -28,6 +28,12 @@ defmodule Tbot.MessageHandlerTest do
     assert {status, response} == {:ok, "Roll call started"}
   end
 
+  @tag :pending
+  test "'/start_roll_call Monday Night Football' responds with 'Monday Night Football roll call started'" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/start_roll_call Monday Night Football"}))
+    assert {status, response} == {:ok, "Monday Night Football roll call started"}
+  end
+
   test "/start_roll_call creates a new RollCall" do
     assert count(RollCall) == 0
     MessageHandler.handle_message(message(%{text: "/start_roll_call"}))

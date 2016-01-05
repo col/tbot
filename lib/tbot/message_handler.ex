@@ -5,6 +5,12 @@ defmodule Tbot.MessageHandler do
   alias Tbot.RollCall
   alias Tbot.RollCallResponse
 
+  # def handle_message(message = %{command: command}) when command == "/start_roll_call" do
+  #   close_existing_roll_calls(message)
+  #   start_roll_call(message)
+  #   {:ok, "Roll call started"}
+  # end
+
   def handle_message(message = %{text: text}) when text == "/start_roll_call" do
     close_existing_roll_calls(message)
     start_roll_call(message)
@@ -52,6 +58,21 @@ defmodule Tbot.MessageHandler do
         {:ok, whos_in_list(roll_call)}
     end
   end
+
+  # def handle_message(message = %{text: text}) do
+  #   command = String.split(text) |> List.first
+  #   Map.put(message, :command, command)
+  #
+  #   params = String.split(text) |> List.delete_at(0)
+  #   Map.put(message, :params, params)
+  #
+  #   if Map.has_key?(message.chat, :id) do
+  #     roll_call = roll_call_for_message(message)
+  #     Map.put(message, :roll_call, roll_call)
+  #   end
+  #
+  #   handle_message(message)
+  # end
 
   def handle_message(message)do
     {:error, "Unknown message: #{to_string(message)}"}
