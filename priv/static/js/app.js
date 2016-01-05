@@ -109,7 +109,19 @@
   require._cache = cache;
   globals.require = require;
 })();
-require.register("deps/phoenix/web/static/js/phoenix", function(exports, require, module) {
+(function() {
+    var global = window;
+    var __shims = {assert: ({}),buffer: ({}),child_process: ({}),cluster: ({}),crypto: ({}),dgram: ({}),dns: ({}),events: ({}),fs: ({}),http: ({}),https: ({}),net: ({}),os: ({}),path: ({}),punycode: ({}),querystring: ({}),readline: ({}),repl: ({}),string_decoder: ({}),tls: ({}),tty: ({}),url: ({}),util: ({}),vm: ({}),zlib: ({}),process: ({"env":{}})};
+    var process = __shims.process;
+
+    var __makeRequire = function(r, __brmap) {
+      return function(name) {
+        if (__brmap[name] !== undefined) name = __brmap[name];
+        name = name.replace(".js", "");
+        return ["assert","buffer","child_process","cluster","crypto","dgram","dns","events","fs","http","https","net","os","path","punycode","querystring","readline","repl","string_decoder","tls","tty","url","util","vm","zlib","process"].indexOf(name) === -1 ? r(name) : __shims[name];
+      }
+    };
+  })();require.register("deps/phoenix/web/static/js/phoenix", function(exports, require, module) {
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
