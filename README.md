@@ -4,7 +4,7 @@
 
 ## Setup and run
 
-  1. Install dependencies with `mix deps.get`
+  1. Install dependencies with `mix deps.get` and `npm install`
   2. Create and migrate your database with `mix ecto.create && mix ecto.migrate`
   3. Start Phoenix endpoint with `mix phoenix.server`
 
