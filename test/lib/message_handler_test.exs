@@ -41,9 +41,15 @@ defmodule Tbot.MessageHandlerTest do
   end
 
 
+  @tag :roll_call_open
   test "/end_roll_call responds with 'Roll call ended'" do
     {status, response} = MessageHandler.handle_message(message(%{text: "/end_roll_call"}))
     assert {status, response} == {:ok, "Roll call ended"}
+  end
+
+  test "/end_roll_call responds with an error message when no active roll call exists" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/end_roll_call"}))
+    assert {status, response} == {:ok, "No roll call in progress"}
   end
 
   @tag :roll_call_open
@@ -57,6 +63,11 @@ defmodule Tbot.MessageHandlerTest do
   test "/in responds correctly" do
     {status, response} = MessageHandler.handle_message(message(%{text: "/in"}))
     assert {status, response} == {:ok, "1. Fred\n"}
+  end
+
+  test "/in responds with an error message when no active roll call exists" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/in"}))
+    assert {status, response} == {:ok, "No roll call in progress"}
   end
 
   @tag :roll_call_open
@@ -80,6 +91,11 @@ defmodule Tbot.MessageHandlerTest do
     assert {status, response} == {:ok, "Out\n - Fred\n"}
   end
 
+  test "/out responds with an error message when no active roll call exists" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/out"}))
+    assert {status, response} == {:ok, "No roll call in progress"}
+  end
+
   @tag :roll_call_open
   test "/out records the users response", %{ roll_call: roll_call } do
     MessageHandler.handle_message(message(%{text: "/out"}))
@@ -101,6 +117,11 @@ defmodule Tbot.MessageHandlerTest do
     Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 2, name: "User 2"})
     {status, response} = MessageHandler.handle_message(message(%{text: "/whos_in"}))
     assert {status, response} == {:ok, "1. User 1\n\nOut\n - User 2\n"}
+  end
+
+  test "/whos_in responds with an error message when no active roll call exists" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/whos_in"}))
+    assert {status, response} == {:ok, "No roll call in progress"}
   end
 
   @tag :roll_call_open

@@ -12,27 +12,45 @@ defmodule Tbot.MessageHandler do
   end
 
   def handle_message(message = %{text: text}) when text == "/end_roll_call" do
-    close_existing_roll_calls(message)
-    {:ok, "Roll call ended"}
+    case roll_call_for_message(message) do
+      nil ->
+        {:ok, "No roll call in progress"}
+      roll_call ->
+        close_existing_roll_calls(message)
+        {:ok, "Roll call ended"}
+    end
   end
 
   def handle_message(message = %{text: text}) when text == "/in" do
-    roll_call = roll_call_for_message(message)
-    update_attendance(roll_call, message, "in")
-    roll_call = roll_call_for_message(message)
-    {:ok, whos_in_list(roll_call)}
+    case roll_call_for_message(message) do
+      nil ->
+        {:ok, "No roll call in progress"}
+      roll_call ->
+        update_attendance(roll_call, message, "in")
+        roll_call = roll_call_for_message(message)
+        {:ok, whos_in_list(roll_call)}
+    end
   end
 
   def handle_message(message = %{text: text}) when text == "/out" do
-    roll_call = roll_call_for_message(message)
-    update_attendance(roll_call, message, "out")
-    roll_call = roll_call_for_message(message)
-    {:ok, whos_in_list(roll_call)}
+    case roll_call_for_message(message) do
+      nil ->
+        {:ok, "No roll call in progress"}
+      roll_call ->
+        update_attendance(roll_call, message, "out")
+        roll_call = roll_call_for_message(message)
+        {:ok, whos_in_list(roll_call)}
+    end
   end
 
   def handle_message(message = %{text: text}) when text == "/whos_in" do
-    roll_call = roll_call_for_message(message)
-    {:ok, whos_in_list(roll_call)}
+    case roll_call_for_message(message) do
+      nil ->
+        {:ok, "No roll call in progress"}
+      roll_call ->
+        roll_call = roll_call_for_message(message)
+        {:ok, whos_in_list(roll_call)}
+    end
   end
 
   def handle_message(message)do
@@ -40,8 +58,11 @@ defmodule Tbot.MessageHandler do
   end
 
   defp roll_call_for_message(message) do
-    Repo.get_by!(RollCall, %{chat_id: message.chat.id, status: "open"})
-    |> Repo.preload(:responses)
+    roll_call = Repo.get_by(RollCall, %{chat_id: message.chat.id, status: "open"})
+    if roll_call != nil do
+      Repo.preload(roll_call, :responses)
+    end
+    roll_call
   end
 
   defp whos_in_list(roll_call) do
