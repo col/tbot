@@ -28,15 +28,23 @@ defmodule Tbot.MessageHandlerTest do
     assert {status, response} == {:ok, "Roll call started"}
   end
 
+  test "/start_roll_call creates a new RollCall" do
+    assert count(RollCall) == 0
+    MessageHandler.handle_message(message(%{text: "/start_roll_call"}))
+    assert Repo.get_by(RollCall, %{chat_id: @chat.id, status: "open"}) != nil
+  end
+
   test "'/start_roll_call Monday Night Football' responds with 'Monday Night Football roll call started'" do
     {status, response} = MessageHandler.handle_message(message(%{text: "/start_roll_call Monday Night Football"}))
     assert {status, response} == {:ok, "Monday Night Football roll call started"}
   end
 
-  test "/start_roll_call creates a new RollCall" do
+  test "'/start_roll_call Monday Night Football' creates a new RollCall with a title" do
     assert count(RollCall) == 0
-    MessageHandler.handle_message(message(%{text: "/start_roll_call"}))
-    assert Repo.get_by(RollCall, %{chat_id: @chat.id, status: "open"}) != nil
+    MessageHandler.handle_message(message(%{text: "/start_roll_call Monday Night Football"}))
+    response = Repo.get_by(RollCall, %{chat_id: @chat.id, status: "open"})
+    assert response != nil
+    assert response.title == "Monday Night Football"    
   end
 
   @tag :roll_call_open

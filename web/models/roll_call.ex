@@ -7,13 +7,14 @@ defmodule Tbot.RollCall do
     field :chat_id, :integer
     field :date, :integer
     field :status, :string
+    field :title, :string
     has_many :responses, Tbot.RollCallResponse
 
     timestamps
   end
 
   @required_fields ~w(chat_id status)
-  @optional_fields ~w(date)
+  @optional_fields ~w(date title)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -35,8 +36,12 @@ defmodule Tbot.RollCall do
   end
 
   def create_roll_call(message) do
-    changeset(%Tbot.RollCall{}, %{chat_id: message.chat.id, status: "open", date: message.date})
-    |> Repo.insert!
+    changeset(%Tbot.RollCall{}, %{
+      chat_id: message.chat.id,
+      status: "open",
+      date: message.date,
+      title: Enum.join(message.params, " ")
+    }) |> Repo.insert!
   end
 
   def close_existing_roll_calls(message) do
