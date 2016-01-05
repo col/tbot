@@ -4,9 +4,9 @@ defmodule Tbot.MessageHandler do
 
   def start_roll_call_command(message) do
     RollCall.close_existing_roll_calls(message)
-    RollCall.create_roll_call(message)
-    if length(message.params) > 0 do
-      {:ok, "#{Enum.join(message.params, " ")} roll call started"}
+    roll_call = RollCall.create_roll_call(message)
+    if RollCall.has_title?(roll_call) do
+      {:ok, "#{roll_call.title} roll call started"}
     else
       {:ok, "Roll call started"}
     end
@@ -14,7 +14,11 @@ defmodule Tbot.MessageHandler do
 
   def end_roll_call_command(message) do
     RollCall.close_existing_roll_calls(message)
-    {:ok, "Roll call ended"}
+    if RollCall.has_title?(message.roll_call) do
+      {:ok, "#{message.roll_call.title} roll call ended"}
+    else
+      {:ok, "Roll call ended"}
+    end
   end
 
   def in_command(message) do
@@ -29,6 +33,12 @@ defmodule Tbot.MessageHandler do
 
   def whos_in_command(message) do
     {:ok, RollCall.whos_in_list(message.roll_call)}
+  end
+
+  def set_title_command(message) do
+    title = Enum.join(message.params, " ")
+    RollCall.set_title(message.roll_call, title)
+    {:ok, "Roll call title set"}
   end
 
   def handle_message(message) do

@@ -27,6 +27,10 @@ defmodule Tbot.RollCall do
     |> cast(params, @required_fields, @optional_fields)
   end
 
+  def has_title?(roll_call) do
+    roll_call.title != nil && String.length(roll_call.title) > 0
+  end
+
   def roll_call_for_message(message) do
     roll_call = Repo.get_by(Tbot.RollCall, %{chat_id: Map.get(message.chat, :id, -1), status: "open"})
     if roll_call != nil do
@@ -58,8 +62,16 @@ defmodule Tbot.RollCall do
     |> Repo.insert_or_update
   end
 
+  def set_title(roll_call, title) do
+    changeset(roll_call, %{title: title}) |> Repo.update!
+  end
+
   def whos_in_list(roll_call) do
     output = []
+
+    if has_title?(roll_call) do
+      output = [roll_call.title]
+    end
 
     in_list = in_response_list(roll_call)
     if String.length(in_list) > 0 do

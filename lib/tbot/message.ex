@@ -1,7 +1,14 @@
 defmodule Tbot.Message do
   alias Tbot.RollCall
 
-  @valid_commands [:start_roll_call_command, :end_roll_call_command, :in_command, :out_command, :whos_in_command]
+  @valid_commands [
+    :start_roll_call_command,
+    :end_roll_call_command,
+    :in_command,
+    :out_command,
+    :whos_in_command,
+    :set_title_command
+  ]
 
   def add_command(message) do
     command = String.split(message.text) |> List.first |> String.slice(1..-1)
