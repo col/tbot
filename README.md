@@ -6,6 +6,7 @@
   - Elixir >= 1.1
   - Erlang >= 18
   - Node >= 5.3
+  - npm >= 3.5.2
   - Postgress >= 9.3
   
 ## Setup and run
