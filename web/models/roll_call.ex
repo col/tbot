@@ -58,7 +58,7 @@ defmodule Tbot.RollCall do
       nil  -> Ecto.Model.build(message.roll_call, :responses)
       response -> response
     end
-    |> RollCallResponse.changeset(%{user_id: message.from.id, name: message.from.first_name, status: status})
+    |> RollCallResponse.changeset(%{user_id: message.from.id, name: message.from.first_name, status: status, reason: Enum.join(message.params, " ")})
     |> Repo.insert_or_update
   end
 
@@ -101,9 +101,17 @@ defmodule Tbot.RollCall do
     out_responses = RollCallResponse |> RollCallResponse.for_roll_call(roll_call) |> RollCallResponse.with_status("out") |> Repo.all
     unless Enum.empty?(out_responses) do
       output = output <> "Out\n"
-      output = Enum.reduce(out_responses, output, fn(response, acc) -> acc <> " - #{response.name}\n" end)
+      output = Enum.reduce(out_responses, output, fn(response, acc) -> acc <> response_to_string(response) end)
     end
     output
+  end
+
+  defp response_to_string(response = %{reason: reason}) do
+    if reason != nil && String.length(reason) > 0 do
+      " - #{response.name} (#{reason})\n"
+    else
+      " - #{response.name}\n"
+    end
   end
 
 end

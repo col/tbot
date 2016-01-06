@@ -102,13 +102,19 @@ defmodule Tbot.MessageHandlerTest do
     Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: @from.id, name: @from.first_name})
     MessageHandler.handle_message(message(%{text: "/in"}))
     assert Repo.one!(RollCallResponse).status == "in"
+    assert Repo.one!(RollCallResponse).reason == ""
   end
-
 
   @tag :roll_call_open
   test "/out responds correctly" do
     {status, response} = MessageHandler.handle_message(message(%{text: "/out"}))
     assert {status, response} == {:ok, "Out\n - Fred\n"}
+  end
+
+  @tag :roll_call_open
+  test "/out includes the reason in the response when it's provided" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/out Injured"}))
+    assert {status, response} == {:ok, "Out\n - Fred (Injured)\n"}
   end
 
   test "/out responds with an error message when no active roll call exists" do
@@ -121,6 +127,14 @@ defmodule Tbot.MessageHandlerTest do
     MessageHandler.handle_message(message(%{text: "/out"}))
     response = Repo.get_by!(RollCallResponse, %{status: "out", user_id: @from.id, name: @from.first_name})
     assert response.roll_call_id == roll_call.id
+  end
+
+  @tag :roll_call_open
+  test "'/out Injured' records the users response and the reason", %{ roll_call: roll_call } do
+    MessageHandler.handle_message(message(%{text: "/out Injured"}))
+    response = Repo.get_by!(RollCallResponse, %{status: "out", user_id: @from.id, name: @from.first_name})
+    assert response.roll_call_id == roll_call.id
+    assert response.reason == "Injured"
   end
 
   @tag :roll_call_open

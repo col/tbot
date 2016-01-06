@@ -5,13 +5,14 @@ defmodule Tbot.RollCallResponse do
     field :status, :string
     field :name, :string
     field :user_id, :integer
+    field :reason, :string
     belongs_to :roll_call, Tbot.RollCall
 
     timestamps
   end
 
   @required_fields ~w(status name user_id)
-  @optional_fields ~w()
+  @optional_fields ~w(reason)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
