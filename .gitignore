@@ -24,3 +24,4 @@ erl_crash.dump
 #/config/prod.secret.exs
 
 SECRET_README.md
+.travis/tbot.pem

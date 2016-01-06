@@ -1,9 +1,16 @@
 language: elixir
-
 elixir:
   - 1.1.0
-
 otp_release:
   - 18.0
-
 sudo: false
+before_install:
+- openssl aes-256-cbc -K $encrypted_ed189f53eef9_key -iv $encrypted_ed189f53eef9_iv
+  -in .travis/tbot.pem.enc -out .travis/tbot.pem -d
+after_success:
+  - chmod 600 .travis/tbot.pem
+  - mkdir -p ~/.ssh
+  - cp .travis/tbot.pem ~/.ssh
+  - cat .travis/host >> ~/.ssh/config
+  - git remote add dokku dokku@colharris.com:tbot
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && git push dokku master
