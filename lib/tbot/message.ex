@@ -12,6 +12,10 @@ defmodule Tbot.Message do
 
   def add_command(message) do
     command = String.split(message.text) |> List.first |> String.slice(1..-1)
+    if String.contains?(command, "@") do
+      {command, _} = String.split(command, "@") |> List.to_tuple
+    end
+
     Map.put(message, :command, String.to_atom(command<>"_command"))
   end
 
