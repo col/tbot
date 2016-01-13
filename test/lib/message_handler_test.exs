@@ -151,6 +151,46 @@ defmodule Tbot.MessageHandlerTest do
 
 
   @tag :roll_call_open
+  test "/maybe responds correctly" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/maybe"}))
+    assert {status, response} == {:ok, "Maybe\n - Fred\n"}
+  end
+
+  @tag :roll_call_open
+  test "/maybe includes the reason in the response when it's provided" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/maybe Injured"}))
+    assert {status, response} == {:ok, "Maybe\n - Fred (Injured)\n"}
+  end
+
+  test "/maybe responds with an error message when no active roll call exists" do
+    {status, response} = MessageHandler.handle_message(message(%{text: "/maybe"}))
+    assert {status, response} == {:ok, "No roll call in progress"}
+  end
+
+  @tag :roll_call_open
+  test "/maybe records the users response", %{ roll_call: roll_call } do
+    MessageHandler.handle_message(message(%{text: "/maybe"}))
+    response = Repo.get_by!(RollCallResponse, %{status: "maybe", user_id: @from.id, name: @from.first_name})
+    assert response.roll_call_id == roll_call.id
+  end
+
+  @tag :roll_call_open
+  test "'/maybe Injured' records the users response and the reason", %{ roll_call: roll_call } do
+    MessageHandler.handle_message(message(%{text: "/maybe Injured"}))
+    response = Repo.get_by!(RollCallResponse, %{status: "maybe", user_id: @from.id, name: @from.first_name})
+    assert response.roll_call_id == roll_call.id
+    assert response.reason == "Injured"
+  end
+
+  @tag :roll_call_open
+  test "/maybe updates an existing response", %{ roll_call: roll_call } do
+    Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: @from.id, name: @from.first_name})
+    MessageHandler.handle_message(message(%{text: "/maybe"}))
+    assert Repo.one!(RollCallResponse).status == "maybe"
+  end
+
+
+  @tag :roll_call_open
   test "/whos_in lists all the in and out responses", %{ roll_call: roll_call } do
     Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "in", user_id: 1, name: "User 1"})
     Repo.insert!(%RollCallResponse{ roll_call_id: roll_call.id, status: "out", user_id: 2, name: "User 2"})

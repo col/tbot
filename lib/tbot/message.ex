@@ -6,6 +6,7 @@ defmodule Tbot.Message do
     :end_roll_call_command,
     :in_command,
     :out_command,
+    :maybe_command,
     :whos_in_command,
     :set_title_command
   ]

@@ -78,6 +78,11 @@ defmodule Tbot.RollCall do
       output = output ++ [in_list]
     end
 
+    maybe_list = maybe_response_list(roll_call)
+    if String.length(maybe_list) > 0 do
+      output = output ++ [maybe_list]
+    end
+
     out_list = out_response_list(roll_call)
     if String.length(out_list) > 0 do
       output = output ++ [out_list]
@@ -102,6 +107,16 @@ defmodule Tbot.RollCall do
     unless Enum.empty?(out_responses) do
       output = output <> "Out\n"
       output = Enum.reduce(out_responses, output, fn(response, acc) -> acc <> response_to_string(response) end)
+    end
+    output
+  end
+
+  defp maybe_response_list(roll_call) do
+    output = ""
+    maybe_responses = RollCallResponse |> RollCallResponse.for_roll_call(roll_call) |> RollCallResponse.with_status("maybe") |> Repo.all
+    unless Enum.empty?(maybe_responses) do
+      output = output <> "Maybe\n"
+      output = Enum.reduce(maybe_responses, output, fn(response, acc) -> acc <> response_to_string(response) end)
     end
     output
   end

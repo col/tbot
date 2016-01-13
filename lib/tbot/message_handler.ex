@@ -31,6 +31,11 @@ defmodule Tbot.MessageHandler do
     {:ok, RollCall.whos_in_list(message.roll_call)}
   end
 
+  def maybe_command(message) do
+    RollCall.update_attendance(message, "maybe")
+    {:ok, RollCall.whos_in_list(message.roll_call)}
+  end
+
   def whos_in_command(message) do
     {:ok, RollCall.whos_in_list(message.roll_call)}
   end
