@@ -40,6 +40,10 @@ defmodule Tbot.MessageHandler do
     {:ok, RollCall.whos_in_list(message.roll_call)}
   end
 
+  def say_hi_command(message) do
+    {:ok, "Hello Elixir Group!"}
+  end
+
   def set_title_command(message) do
     title = Enum.join(message.params, " ")
     RollCall.set_title(message.roll_call, title)

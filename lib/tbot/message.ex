@@ -8,7 +8,8 @@ defmodule Tbot.Message do
     :out_command,
     :maybe_command,
     :whos_in_command,
-    :set_title_command
+    :set_title_command,
+    :say_hi_command
   ]
 
   def add_command(message) do
