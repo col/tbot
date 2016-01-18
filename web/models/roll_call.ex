@@ -31,12 +31,16 @@ defmodule Tbot.RollCall do
     roll_call.title != nil && String.length(roll_call.title) > 0
   end
 
-  def roll_call_for_message(message) do
-    roll_call = Repo.get_by(Tbot.RollCall, %{chat_id: Map.get(message.chat, :id, -1), status: "open"})
+  def roll_call_for_message(%{ chat: %{ id: chat_id } }) do
+    roll_call = Repo.get_by(Tbot.RollCall, %{chat_id: chat_id, status: "open"})
     if roll_call != nil do
       Repo.preload(roll_call, :responses)
     end
     roll_call
+  end
+
+  def roll_call_for_message(_) do
+    nil
   end
 
   def create_roll_call(message) do
